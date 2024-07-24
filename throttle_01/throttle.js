@@ -4,7 +4,7 @@ const clickHandler = () => {
   console.log("clicked");
 }
 
-const throttle = (fn, delay) => {
+const throttle = (fn, delay, trailing = true) => {
   let lastExec = 0;
   let timer = null;
 
@@ -19,7 +19,7 @@ const throttle = (fn, delay) => {
     if (duration >= delay) {
       lastExec = Date.now();
       fn();
-    } else {
+    } else if (trailing) {
       timer = setTimeout(() => {
         lastExec = Date.now();
         fn();
@@ -30,6 +30,6 @@ const throttle = (fn, delay) => {
   }
 };
 
-const clickHandlerThrottled = throttle(clickHandler, 2000);
+const clickHandlerThrottled = throttle(clickHandler, 2000, false);
 
 clickEl.addEventListener("click", clickHandlerThrottled);
