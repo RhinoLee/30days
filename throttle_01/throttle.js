@@ -1,15 +1,26 @@
 const clickEl = document.getElementById("clickEl");
 
-const clickHandler = () => {
+function clickHandler () {
   console.log("clicked");
+  console.log("this: ", this) // this 會是 clickEl
 }
 
-const throttle = (fn, delay, trailing = true, leading = true) => {
+const createFilterWrapper = (filter, fn) => {
+  function wrapper(...args) {
+    // 這邊的 this 源頭會是 clickHandlerThrottled
+    filter(() => fn.apply(this, args), { fn, this: this, args })
+  };
+
+  return wrapper;
+}
+
+const throttle = (...args) => {
+  const [delay, trailing = true, leading = true] = args
   let lastExec = 0;
   let timer = null;
   let isLeading = true;
 
-  return function () {
+  return function (invoke) {
     const duration = Date.now() - lastExec;
 
     if (timer) {
@@ -19,11 +30,11 @@ const throttle = (fn, delay, trailing = true, leading = true) => {
 
     if (duration >= delay && (leading || !isLeading)) {
       lastExec = Date.now();
-      fn();
+      invoke();
     } else if (trailing) {
       timer = setTimeout(() => {
         lastExec = Date.now();
-        fn();
+        invoke();
         clearTimeout(timer);
         timer = null;
       }, delay - duration)
@@ -39,6 +50,18 @@ const throttle = (fn, delay, trailing = true, leading = true) => {
   }
 };
 
-const clickHandlerThrottled = throttle(clickHandler, 2000, true, false);
+const useThrottle = (
+  fn,
+  delay = 200,
+  trailing = false,
+  leading = true,
+) => {
+  return createFilterWrapper(
+    throttle(delay, trailing, leading),
+    fn,
+  )
+}
+
+const clickHandlerThrottled = useThrottle(clickHandler, 2000, true, false);
 
 clickEl.addEventListener("click", clickHandlerThrottled);
