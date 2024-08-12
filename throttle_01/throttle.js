@@ -37,7 +37,7 @@ const throttle = (...args) => {
         invoke();
         clearTimeout(timer);
         timer = null;
-      }, delay - duration)
+      }, Math.max(0, delay - duration))
     }
 
     if (!leading && !timer)  {
