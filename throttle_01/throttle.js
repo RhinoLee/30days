@@ -1,10 +1,3 @@
-const clickEl = document.getElementById("clickEl");
-
-function clickHandler () {
-  console.log("clicked");
-  console.log("this: ", this) // this 會是 clickEl
-}
-
 const createFilterWrapper = (filter, fn) => {
   function wrapper(...args) {
     // 這邊的 this 源頭會是 clickHandlerThrottled
@@ -70,7 +63,7 @@ const throttle = (...args) => {
   }
 };
 
-const useThrottle = (
+export const useThrottle = (
   fn,
   delay = 200,
   trailing = false,
@@ -82,13 +75,3 @@ const useThrottle = (
     fn,
   )
 }
-
-const clickHandlerThrottled = useThrottle(clickHandler, 2000, true, true, true);
-
-clickEl.addEventListener("click", function (){
-  clickHandlerThrottled.apply(this).then(() => {
-    console.log("clickHandlerThrottled resolve");
-  }).catch(() => {
-    console.log("clickHandlerThrottled reject");
-  })
-});
