@@ -1,4 +1,4 @@
-const createFilterWrapper = (filter, fn) => {
+export const createFilterWrapper = (filter, fn) => {
   function wrapper(...args) {
     // 這邊的 this 源頭會是 clickHandlerThrottled
     return new Promise((resolve, reject) => {
@@ -11,7 +11,7 @@ const createFilterWrapper = (filter, fn) => {
   return wrapper;
 }
 
-const throttle = (...args) => {
+export const throttle = (...args) => {
   const [delay, trailing = true, leading = true, rejectOnCancel = false] = args
   let lastExec = 0;
   let timer = null;
@@ -36,7 +36,6 @@ const throttle = (...args) => {
     }
 
     clear();
-
     if (duration >= delay && (leading || !isLeading)) {
       lastExec = Date.now();
       invoke();
